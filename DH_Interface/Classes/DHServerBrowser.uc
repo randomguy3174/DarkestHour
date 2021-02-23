@@ -107,18 +107,17 @@ defaultproperties
 
     PanelClass(0)="DH_Interface.DHBrowser_ServerListPageFavorites"
     PanelClass(1)="DH_Interface.DHBrowser_ServerListPageLAN"
-    PanelClass(2)="DH_Interface.DHBrowser_ServerListPageInternet"
-    PanelClass(3)=""
-    PanelClass(4)=""
-    PanelClass(5)=""
+    PanelClass(2)="DH_Interface.DHBrowser_ServerListPageOfficial"
+    PanelClass(3)="DH_Interface.DHBrowser_ServerListPageInternet"
     PanelHint(0)="Choose a server to join from among your favorites"
     PanelHint(1)="View all DH servers currently running on your LAN"
-    PanelHint(2)="Choose from DH servers across the world"
+    PanelHint(2)="Play on official DH servers"
+    PanelHint(3)="Choose from DH servers across the world"
     PanelCaption(0)="Favorites"
     PanelCaption(1)="LAN"
-    PanelCaption(2)="Internet"
+    PanelCaption(2)="Official Servers"
+    PanelCaption(3)="All Servers"
 
     BetaMessageText="Welcome to the Darkest Hour: Europe '44-'45 live beta! Be sure to join the 500+ strong Discord community to discuss the game, make suggestions, or report any bugs! See you on the battlefield!"
     OnOpen=InternalOnOpen
 }
-
