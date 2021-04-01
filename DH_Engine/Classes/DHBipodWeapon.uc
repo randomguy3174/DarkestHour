@@ -27,7 +27,7 @@ replication
 // Modified to play BipodHipIdle animation on a server, instead of the usual IdleAnim, so that weapon will be in the right position for hip hire calculations
 simulated function PostBeginPlay()
 {
-    super(DHWeapon).PostBeginPlay();
+    super.PostBeginPlay();
 
     if (Role == ROLE_Authority && !InstigatorIsLocallyControlled() && HasAnim(BipodHipIdle))
     {

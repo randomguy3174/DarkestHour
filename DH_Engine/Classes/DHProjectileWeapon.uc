@@ -111,6 +111,11 @@ var   Material          ScriptedTextureFallback;    // The texture to render if 
 var   Material          ScriptedScopeTexture;       // The reticle texture to use for 3d scopes.
 var   Combiner          ScriptedScopeCombiner;
 
+// First person rounds
+var     class<ROFPAmmoRound>    BeltBulletClass;   // class to spawn for each bullet on the ammo belt
+var     array<ROFPAmmoRound>    MGBeltArray;       // array of first person ammo rounds
+var     array<name>             MGBeltBones;       // array of bone names to attach the belt to
+
 replication
 {
     // Variables the server will replicate to the client that owns this actor
@@ -157,6 +162,11 @@ simulated function PostBeginPlay()
     {
         ScopeDetail = class'DH_Engine.DHWeapon'.default.ScopeDetail;
         UpdateScopeMode();
+    }
+
+    if (Level.NetMode != NM_DedicatedServer)
+    {
+        SpawnAmmoBelt();
     }
 }
 
@@ -2689,6 +2699,46 @@ simulated function UpdateScopeMode()
             bPlayerFOVZooms = true;
 
             bInitializedScope = true;
+        }
+    }
+}
+
+// Handles making ammo belt bullets disappear
+simulated function UpdateAmmoBelt()
+{
+    local int i;
+
+    for (i = AmmoAmount(0); i < MGBeltArray.Length; ++i)
+    {
+        if (MGBeltArray[i] != none)
+        {
+            MGBeltArray[i].SetDrawType(DT_None);
+        }
+    }
+}
+
+// Spawn the first person linked ammo belt
+simulated function SpawnAmmoBelt()
+{
+    local int i;
+
+    for (i = 0; i < MGBeltBones.Length; ++i)
+    {
+        MGBeltArray[i] = Spawn(BeltBulletClass, self);
+        AttachToBone(MGBeltArray[i], MGBeltBones[i]);
+    }
+}
+
+// Make the full ammo belt visible again (called by anim notifies)
+simulated function RenewAmmoBelt()
+{
+    local int i;
+
+    for (i = 0; i < MGBeltArray.Length; ++i)
+    {
+        if (MGBeltArray[i] != none)
+        {
+            MGBeltArray[i].SetDrawType(DT_StaticMesh);
         }
     }
 }
