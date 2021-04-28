@@ -26,6 +26,7 @@ var float EstablishmentCounterThreshold;        // The value that EstablishmentC
 
 // Overrun
 var int   OverrunRadiusInMeters;                // The distance, in meters, that enemies must be within to immediately overrun a rally point.
+var int   OverrunRequiredPlayerAmount;          // A minimum amount of players required to overrun a rally point.
 var float OverrunMinimumTimeSeconds;            // The number of seconds a rally point must be "alive" for in order to be overrun by enemies. (To stop squad rally points being used as "enemy radar".
 
 // Abandonment
@@ -197,7 +198,7 @@ function Timer()
 
     // Destroy the rally point immediately if there are enemies within a
     // very short distance.
-    if (OverrunningEnemiesCount >= 1)
+    if (OverrunningEnemiesCount >= OverrunRequiredPlayerAmount)
     {
         // "A squad rally point has been overrun by enemies."
         SRI.BroadcastSquadLocalizedMessage(GetTeamIndex(), SquadIndex, SRI.SquadMessageClass, 54);
@@ -599,9 +600,10 @@ defaultproperties
     IsExposedPenaltySeconds=15
 
     OverrunRadiusInMeters=15
+    OverrunRequiredPlayerAmount=2
+    OverrunMinimumTimeSeconds=15
     EstablishmentRadiusInMeters=25
     EstablishmentCounterThreshold=10
-    OverrunMinimumTimeSeconds=15
     SpawnAccrualThreshold=30
     bHidden=false
     bCanSendAbandonmentWarningMessage=true
