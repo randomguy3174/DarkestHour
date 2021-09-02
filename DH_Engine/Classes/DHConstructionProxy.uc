@@ -629,7 +629,7 @@ function DHConstruction.ConstructionError GetPositionError()
         {
             C = DHConstruction(A);
 
-            if (C != none && !C.IsInState('Dummy') && (C.GetTeamIndex() == NEUTRAL_TEAM_INDEX || C.GetTeamIndex() == PawnOwner.GetTeamNum()))
+            if (C != none && (!C.IsInState('Dummy') || C.bCountDummyDuplicates) && (C.GetTeamIndex() == NEUTRAL_TEAM_INDEX || C.GetTeamIndex() == PawnOwner.GetTeamNum()))
             {
                 F = FMax(F, ConstructionClass.default.DuplicateFriendlyDistanceInMeters - class'DHUnits'.static.UnrealToMeters(VSize(C.Location - Location)));
             }
@@ -651,7 +651,7 @@ function DHConstruction.ConstructionError GetPositionError()
         {
             C = DHConstruction(A);
 
-            if (C != none && !C.IsInState('Dummy') && C.GetTeamIndex() != NEUTRAL_TEAM_INDEX && C.GetTeamIndex() != PawnOwner.GetTeamNum())
+            if (C != none && (!C.IsInState('Dummy') || C.bCountDummyDuplicates) && C.GetTeamIndex() != NEUTRAL_TEAM_INDEX && C.GetTeamIndex() != PawnOwner.GetTeamNum())
             {
                 F = FMax(F, ConstructionClass.default.DuplicateEnemyDistanceInMeters - class'DHUnits'.static.UnrealToMeters(VSize(C.Location - Location)));
             }
@@ -727,4 +727,3 @@ defaultproperties
     bBlockActors=false
     bAcceptsProjectors=false
 }
-

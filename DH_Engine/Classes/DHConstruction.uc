@@ -125,6 +125,7 @@ var     class<Emitter>  PlacementEmitterClass;  // Emitter to spawn when the con
 var     float   FloatToleranceInMeters;             // The distance the construction is allowed to "float" off of the ground at any given point along it's circumfrence
 var     float   DuplicateFriendlyDistanceInMeters;  // The distance required between identical constructions of the same type for FRIENDLY constructions.
 var     float   DuplicateEnemyDistanceInMeters;     // The distance required between identical constructions of the same type for ENEMY constructions.
+var     bool    bCountDummyDuplicates;              // Don't discard duplicates in Dummy states
 
 // Construction
 var private int SupplyCost;                     // The amount of supply points this construction costs
