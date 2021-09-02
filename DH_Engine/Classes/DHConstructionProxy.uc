@@ -621,48 +621,18 @@ function DHConstruction.ConstructionError GetPositionError()
 
     // If a duplicate distance is specified, don't allow the construction to be
     // placed if is within the duplicate distance.
-    if (ConstructionClass.default.DuplicateFriendlyDistanceInMeters > 0.0)
+    if (IsNearDuplicate(PawnOwner.GetTeamNum(), ConstructionClass.default.DuplicateFriendlyDistanceInMeters, F))
     {
-        F = 0.0;
-
-        foreach RadiusActors(ConstructionClass, A, class'DHUnits'.static.MetersToUnreal(ConstructionClass.default.DuplicateFriendlyDistanceInMeters))
-        {
-            C = DHConstruction(A);
-
-            if (C != none && (!C.IsInState('Dummy') || C.bCountDummyDuplicates) && (C.GetTeamIndex() == NEUTRAL_TEAM_INDEX || C.GetTeamIndex() == PawnOwner.GetTeamNum()))
-            {
-                F = FMax(F, ConstructionClass.default.DuplicateFriendlyDistanceInMeters - class'DHUnits'.static.UnrealToMeters(VSize(C.Location - Location)));
-            }
-        }
-
-        if (F > 0.0)
-        {
-            E.Type = ERROR_TooCloseFriendly;
-            E.OptionalInteger = int(Ceil(F));
-            return E;
-        }
+        E.Type = ERROR_TooCloseFriendly;
+        E.OptionalInteger = int(Ceil(F));
+        return E;
     }
 
-    if (ConstructionClass.default.DuplicateEnemyDistanceInMeters > 0.0)
+    if (IsNearDuplicate(byte(!bool(PawnOwner.GetTeamNum())), ConstructionClass.default.DuplicateEnemyDistanceInMeters, F))
     {
-        F = 0.0;
-
-        foreach RadiusActors(ConstructionClass, A, class'DHUnits'.static.MetersToUnreal(ConstructionClass.default.DuplicateEnemyDistanceInMeters))
-        {
-            C = DHConstruction(A);
-
-            if (C != none && (!C.IsInState('Dummy') || C.bCountDummyDuplicates) && C.GetTeamIndex() != NEUTRAL_TEAM_INDEX && C.GetTeamIndex() != PawnOwner.GetTeamNum())
-            {
-                F = FMax(F, ConstructionClass.default.DuplicateEnemyDistanceInMeters - class'DHUnits'.static.UnrealToMeters(VSize(C.Location - Location)));
-            }
-        }
-
-        if (F > 0.0)
-        {
-            E.Type = ERROR_TooCloseEnemy;
-            E.OptionalInteger = int(Ceil(F));
-            return E;
-        }
+        E.Type = ERROR_TooCloseEnemy;
+        E.OptionalInteger = int(Ceil(F));
+        return E;
     }
 
     for (i = 0; i < ConstructionClass.default.ProximityRequirements.Length; ++i)
@@ -716,6 +686,32 @@ function UpdateParameters(vector Location, rotator Direction, Actor GroundActor,
     }
 
     UpdateError();
+}
+
+function bool IsNearDuplicate(byte TeamIndex, float RadiusInMeters, out float DistanceToLeaveRadiusInMeters)
+{
+    local DHConstruction C;
+    local Actor A;
+
+    DistanceToLeaveRadiusInMeters = 0.0;
+
+    if (RadiusInMeters > 0.0)
+    {
+        foreach RadiusActors(ConstructionClass, A, class'DHUnits'.static.MetersToUnreal(RadiusInMeters))
+        {
+            C = DHConstruction(A);
+
+            if (C != none &&
+                (!C.IsInState('Dummy') || C.bCountDummyDuplicates) &&
+                (C.GetTeamIndex() == NEUTRAL_TEAM_INDEX || C.GetTeamIndex() == TeamIndex))
+            {
+                DistanceToLeaveRadiusInMeters = FMax(DistanceToLeaveRadiusInMeters,
+                                                     RadiusInMeters - class'DHUnits'.static.UnrealToMeters(VSize(C.Location - Location)));
+            }
+        }
+
+        return DistanceToLeaveRadiusInMeters > 0.0;
+    }
 }
 
 defaultproperties
