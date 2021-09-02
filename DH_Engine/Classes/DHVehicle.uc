@@ -297,6 +297,8 @@ simulated function PostNetBeginPlay()
     SpawnVehicleAttachments();
 }
 
+simulated delegate DestroyConstruction();
+
 // Modified to destroy extra attachments & effects - including the DestructionEffect emitter
 // That's because if an already exploded vehicle replicates to a net client, the vehicle gets Destroyed() before the natural LifeSpan of the emitter
 // That left the DestructionEffect burning away in mid air after the vehicle has disappeared (the Super calls Kill() on the emitter, but it doesn't seem to work)
@@ -310,6 +312,7 @@ simulated function Destroyed()
     super.Destroyed();
 
     DestroyAttachments();
+    DestroyConstruction();
 
     if (NotifyParameters != none)
     {

@@ -10,6 +10,8 @@ class DHConstruction_Vehicle extends DHConstruction
 var class<DHVehicle>    VehicleClass;
 var DHVehicle           Vehicle;
 
+simulated function OnVehicleDestroyed() { Destroy(); }
+
 function Destroyed()
 {
     super.Destroyed();
@@ -35,23 +37,14 @@ simulated function OnConstructed()
         {
             Vehicle = Spawn(VehicleClass,,, Location, Rotation);
 
+            if (Vehicle == none)
+            {
+                Warn("Failed to spawn construction vehicle.");
+                Destroy();
+            }
+
+            Vehicle.DestroyConstruction = OnVehicleDestroyed;
             GotoState('Dummy');
-        }
-    }
-}
-
-simulated state Dummy
-{
-    function BeginState()
-    {
-        SetTimer(1.0, true);
-    }
-
-    function Timer()
-    {
-        if (Vehicle == none)
-        {
-            Destroy();
         }
     }
 }
@@ -194,4 +187,3 @@ defaultproperties
     DuplicateFriendlyDistanceInMeters=15.0
     CompletionPointValue=100
 }
-
