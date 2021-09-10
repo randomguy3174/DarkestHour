@@ -53,6 +53,16 @@ function MyGetComboOptions(moComboBox Combo, out array<GUIListElem> Options)
 
     switch (Combo)
     {
+		case co_Texture:
+		case co_Char:
+			for (i = 2; i < arraycount(DetailLevels); i++)
+			{
+                Options.Length = Options.Length + 1;
+				Options[Options.Length - 1].Item = DetailLevels[i];
+			}
+			break;
+
+        break;
         case co_GlobalDetails:
             for (i = 0; i < arraycount(DetailOptions); ++i)
             {
@@ -293,6 +303,18 @@ function InternalOnChange(GUIComponent Sender)
     switch (Sender)
     {
         // These changes are saved together on SaveSettings
+		case co_Texture:
+			i = GetDetailIndex(co_Texture.GetText());
+			bGoingUp = i > iTexture && i != iTextureD;
+			iTexture = i;
+			break;
+
+		case co_Char:
+			i = GetDetailIndex(co_Char.GetText());
+			bGoingUp = i > iChar && i != iCharD;
+			iChar = i;
+			break;
+
         case co_GlobalDetails:
             i = co_GlobalDetails.GetIndex();
             bGoingUp = i > iGlobalDetails && i != iGlobalDetailsD && (i != MAX_DETAIL_OPTIONS - 1);
@@ -395,8 +417,8 @@ function UpdateGlobalDetails()
     switch (iGlobalDetails)
     {
         case 0: // Lowest
-            co_Texture.SetIndex(0);         // Range = 0 - 8
-            co_Char.SetIndex(0);            // Range = 0 - 8
+            co_Texture.SetIndex(0);         // Range = 0 - 6
+            co_Char.SetIndex(0);            // Range = 0 - 6
             co_World.SetIndex(0);           // Range = 0 - 2
             co_ScopeDetail.SetIndex(1);     // Range = 0 - 2 , 1 being lowest
             co_Physics.SetIndex(0);         // Range = 0 - 2
@@ -422,8 +444,8 @@ function UpdateGlobalDetails()
             break;
 
         case 1: // Low
-            co_Texture.SetIndex(3);         // Range = 0 - 8
-            co_Char.SetIndex(3);            // Range = 0 - 8
+            co_Texture.SetIndex(1);         // Range = 0 - 6
+            co_Char.SetIndex(1);            // Range = 0 - 6
             co_World.SetIndex(0);           // Range = 0 - 2
             co_ScopeDetail.SetIndex(1);     // Range = 0 - 2 , 1 being lowest
             co_Physics.SetIndex(0);         // Range = 0 - 2
@@ -457,8 +479,8 @@ function UpdateGlobalDetails()
             break;
 
         case 2: // Medium
-            co_Texture.SetIndex(5);         // Range = 0 - 8
-            co_Char.SetIndex(5);            // Range = 0 - 8
+            co_Texture.SetIndex(3);         // Range = 0 - 6
+            co_Char.SetIndex(3);            // Range = 0 - 6
             co_World.SetIndex(1);           // Range = 0 - 2
             co_ScopeDetail.SetIndex(1);     // Range = 0 - 2 , 1 being lowest
             co_Physics.SetIndex(1);         // Range = 0 - 2
@@ -496,8 +518,8 @@ function UpdateGlobalDetails()
             break;
 
         case 3: // High
-            co_Texture.SetIndex(6);         // Range = 0 - 8
-            co_Char.SetIndex(6);            // Range = 0 - 8
+            co_Texture.SetIndex(4);         // Range = 0 - 6
+            co_Char.SetIndex(4);            // Range = 0 - 6
             co_World.SetIndex(2);           // Range = 0 - 2
             co_ScopeDetail.SetIndex(0);     // Range = 0 - 2 , 1 being lowest
             co_Physics.SetIndex(1);         // Range = 0 - 2
@@ -548,8 +570,8 @@ function UpdateGlobalDetails()
             break;
 
         case 4: // Higher
-            co_Texture.SetIndex(7);         // Range = 0 - 8
-            co_Char.SetIndex(7);            // Range = 0 - 8
+            co_Texture.SetIndex(5);         // Range = 0 - 6
+            co_Char.SetIndex(5);            // Range = 0 - 6
             co_World.SetIndex(2);           // Range = 0 - 2
             co_ScopeDetail.SetIndex(2);     // Range = 0 - 2 , 1 being lowest
             co_Physics.SetIndex(1);         // Range = 0 - 2
@@ -603,8 +625,8 @@ function UpdateGlobalDetails()
             break;
 
         case 5: // Highest
-            co_Texture.SetIndex(8);         // Range = 0 - 8
-            co_Char.SetIndex(8);            // Range = 0 - 8
+            co_Texture.SetIndex(6);         // Range = 0 - 6
+            co_Char.SetIndex(6);            // Range = 0 - 6
             co_World.SetIndex(2);           // Range = 0 - 2
             co_ScopeDetail.SetIndex(2);     // Range = 0 - 2 , 1 being lowest
             co_Physics.SetIndex(2);         // Range = 0 - 2
