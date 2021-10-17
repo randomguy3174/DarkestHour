@@ -6,7 +6,10 @@
 class DHMapMarker_FireSupport extends DHMapMarker
     abstract;
 
-var color             ActivatedIconColor; // for off-map artillery requests
+var color           ActivatedIconColor; // for off-map artillery requests
+
+var TexRotator      ArrowIconMaterial;
+var IntBox          ArrowIconCoords;
 
 static function string GetCaptionString(DHPlayer PC, DHGameReplicationInfo.MapMarker Marker)
 {
@@ -54,6 +57,49 @@ static function color GetIconColor(DHPlayer PC, DHGameReplicationInfo.MapMarker 
     }
 
     return default.IconColor;
+}
+
+static function GetIconMaterial(DHPlayer PC, DHGameReplicationInfo.MapMarker Marker, out Material Material, out IntBox Coords)
+{
+    local DHGameReplicationInfo GRI;
+    local DHGameReplicationInfo.MapMarker HitMarker;
+    local vector Direction;
+    local float ArrowRotation;
+    local TexRotator TR;
+
+    if (PC != none && PC.GetPersonalMarkerWithClass(class'DHMapMarker_ArtilleryHit', HitMarker))
+    {
+        // If the OptionalByte of the hit marker is non-zero, this means that
+        // the artillery hit wasn't close enough to any of the fire support markers.
+        // When this happens, display an arrow pointing in the direction of the
+        // hit so that the gunner is not completely in the dark as to where their
+        // round landed.
+        if (HitMarker.OptionalByte != 0 && HitMarker.CreationTime > Marker.CreationTime)
+        {
+            Material = default.ArrowIconMaterial;
+            Coords = default.ArrowIconCoords;
+            Direction = Normal(Marker.WorldLocation - HitMarker.WorldLocation);
+            ArrowRotation = class'UUnits'.static.RadiansToUnreal(Atan(Direction.X, Direction.Y));
+
+            GRI = DHGameReplicationInfo(PC.GameReplicationInfo);
+
+            if (GRI != none)
+            {
+                ArrowRotation -= class'UUnits'.static.DegreesToUnreal(GRI.OverheadOffset);
+            }
+
+            TR = TexRotator(Material);
+
+            if (TR != none)
+            {
+                TR.Rotation.Yaw = ArrowRotation;
+            }
+
+            return;
+        }
+    }
+
+    super.GetIconMaterial(PC, Marker, Material, Coords);
 }
 
 defaultproperties

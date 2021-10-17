@@ -39,10 +39,6 @@ var     TextWidget          PlayerNumberText;
 var     SpriteWidget        MapIconCarriedRadio;
 var     SpriteWidget        MapAxisFlagIcon;
 var     SpriteWidget        MapAlliesFlagIcons[5];
-var     SpriteWidget        MapIconMortarHETarget;
-var     SpriteWidget        MapIconMortarSmokeTarget;
-var     SpriteWidget        MapIconMortarArrow;
-var     SpriteWidget        MapIconMortarHit;
 var     SpriteWidget        MapIconObjectiveStatusIcon;
 var     float               PlayerIconScale, PlayerIconLargeScale;
 
@@ -3800,9 +3796,14 @@ function DrawMapMarkerOnMap(DHPlayer PC, Canvas C, AbsoluteCoordsInfo SubCoords,
     }
 
     MapMarkerClass = MapMarker.MapMarkerClass;
+
+    if (MapMarkerClass == none)
+    {
+        return;
+    }
+
     Caption = MapMarkerClass.static.GetCaptionString(PC, MapMarker);
-    MapMarkerIcon.WidgetTexture = MapMarkerClass.default.IconMaterial;
-    MapMarkerIcon.TextureCoords = MapMarkerClass.default.IconCoords;
+    MapMarkerClass.static.GetIconMaterial(PC, MapMarker, MapMarkerIcon.WidgetTexture, MapMarkerIcon.TextureCoords);
     MapMarkerIcon.Tints[AXIS_TEAM_INDEX] = MapMarkerClass.static.GetIconColor(PC, MapMarker);
 
     DHDrawIconOnMap(C, SubCoords, MapMarkerIcon, MyMapScale, Target, MapCenter, Viewport,, Caption,, -1);

@@ -232,7 +232,7 @@ event InitInputSystem()
 }
 
 // Allows the server to tell the client to set a personal map marker
-simulated function ClientAddPersonalMapMarker(class<DHMapMarker> MapMarkerClass, vector MarkerLocation)
+simulated function ClientAddPersonalMapMarker(class<DHMapMarker> MapMarkerClass, vector MarkerLocation, optional byte OptionalByte)
 {
     local DHGameReplicationInfo GRI;
     local vector MapLocation;
@@ -242,7 +242,7 @@ simulated function ClientAddPersonalMapMarker(class<DHMapMarker> MapMarkerClass,
     if (GRI != none)
     {
         GRI.GetMapCoords(MarkerLocation, MapLocation.X, MapLocation.Y);
-        AddPersonalMarker(MapMarkerClass, MapLocation.X, MapLocation.Y, MarkerLocation);
+        AddPersonalMarker(MapMarkerClass, MapLocation.X, MapLocation.Y, MarkerLocation, OptionalByte);
     }
 }
 
@@ -5413,9 +5413,7 @@ simulated function bool GetMarkedParadropLocation(out vector ParadropLocation)
 {
     local DHGameReplicationInfo.MapMarker ParadropMarker;
 
-    ParadropMarker = FindPersonalMarker(ParadropMarkerClass);
-
-    if (ParadropMarker.MapMarkerClass != none)
+    if (GetPersonalMarkerWithClass(ParadropMarkerClass, ParadropMarker))
     {
         ParadropLocation = ParadropMarker.WorldLocation;
         ParadropLocation.Z = ParadropHeight;
@@ -5773,7 +5771,7 @@ function ServerSquadRename(string Name)
     }
 }
 
-function bool ServerAddMapMarker(class<DHMapMarker> MapMarkerClass, float MapLocationX, float MapLocationY, vector WorldLocation)
+function bool ServerAddMapMarker(class<DHMapMarker> MapMarkerClass, float MapLocationX, float MapLocationY, vector WorldLocation, optional byte OptionalByte)
 {
     local DHGameReplicationInfo GRI;
     local DHPlayerReplicationInfo PRI;
@@ -5787,7 +5785,7 @@ function bool ServerAddMapMarker(class<DHMapMarker> MapMarkerClass, float MapLoc
 
     if (GRI != none)
     {
-        return GRI.AddMapMarker(PRI, MapMarkerClass, MapLocation, WorldLocation) != -1;
+        return GRI.AddMapMarker(PRI, MapMarkerClass, MapLocation, WorldLocation, OptionalByte) != -1;
     }
 
     return false;
@@ -5820,20 +5818,21 @@ function array<DHGameReplicationInfo.MapMarker> GetPersonalMarkers()
     return PersonalMapMarkers;
 }
 
-function DHGameReplicationInfo.MapMarker FindPersonalMarker(class<DHMapMarker> MapMarkerClass)
+// Returns true if marker is found, false if not.
+function bool GetPersonalMarkerWithClass(class<DHMapMarker> MapMarkerClass, out DHGameReplicationInfo.MapMarker MapMarker)
 {
     local int i;
-    local DHGameReplicationInfo.MapMarker Marker;
 
     for (i = 0; i < PersonalMapMarkers.Length; ++i)
     {
         if (PersonalMapMarkers[i].MapMarkerClass == MapMarkerClass)
         {
-            return PersonalMapMarkers[i];
+            MapMarker = PersonalMapMarkers[i];
+            return true;
         }
     }
 
-    return Marker; // dummy marker
+    return false;
 }
 
 function bool IsPersonalMarkerPlaced(class<DHMapMarker> MapMarkerClass)
@@ -5849,7 +5848,7 @@ function bool IsPersonalMarkerPlaced(class<DHMapMarker> MapMarkerClass)
     }
 }
 
-function AddPersonalMarker(class<DHMapMarker> MapMarkerClass, float MapLocationX, float MapLocationY, vector WorldLocation)
+function AddPersonalMarker(class<DHMapMarker> MapMarkerClass, float MapLocationX, float MapLocationY, vector WorldLocation, optional byte OptionalByte)
 {
     local DHGameReplicationInfo GRI;
     local DHGameReplicationInfo.MapMarker PMM;
@@ -5893,6 +5892,7 @@ function AddPersonalMarker(class<DHMapMarker> MapMarkerClass, float MapLocationX
     PMM.LocationX = byte(255.0 * FClamp(MapLocationX, 0.0, 1.0));
     PMM.LocationY = byte(255.0 * FClamp(MapLocationY, 0.0, 1.0));
     PMM.WorldLocation = WorldLocation;
+    PMM.OptionalByte = OptionalByte;
 
     if (MapMarkerClass.default.LifetimeSeconds != -1)
     {

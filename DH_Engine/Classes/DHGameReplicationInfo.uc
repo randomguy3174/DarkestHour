@@ -165,6 +165,7 @@ struct MapMarker
     var int CreationTime;                   // The time this marker was created, relative to ElapsedTime
     var int ExpiryTime;                     // The expiry time, relative to ElapsedTime
     var vector WorldLocation;               // World location of the marker
+    var byte OptionalByte;                  // Optional byte for passing extra info
 };
 
 // This handles the mutable artillery type info (classes, team indices can be fetched from static data in DH_LevelInfo).
@@ -1592,7 +1593,7 @@ simulated function GetGlobalArtilleryMapMarkers(DHPlayer PC, out array<MapMarker
     }
 }
 
-function int AddMapMarker(DHPlayerReplicationInfo PRI, class<DHMapMarker> MapMarkerClass, vector MapLocation, vector WorldLocation)
+function int AddMapMarker(DHPlayerReplicationInfo PRI, class<DHMapMarker> MapMarkerClass, vector MapLocation, vector WorldLocation, optional byte OptionalByte)
 {
     local int i;
     local MapMarker M;
@@ -1605,6 +1606,7 @@ function int AddMapMarker(DHPlayerReplicationInfo PRI, class<DHMapMarker> MapMar
     M.Author = PRI;
     M.MapMarkerClass = MapMarkerClass;
     M.CreationTime = ElapsedTime;
+    M.OptionalByte = OptionalByte;
 
     // Quantize map-space coordinates for transmission.
     M.LocationX = byte(255.0 * FClamp(MapLocation.X, 0.0, 1.0));

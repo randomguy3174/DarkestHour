@@ -253,6 +253,12 @@ static function string GetDistanceString(DHPlayer PC, DHGameReplicationInfo.MapM
     return (Distance / 5) * 5 $ "m";
 }
 
+static function GetIconMaterial(DHPlayer PC, DHGameReplicationInfo.MapMarker Marker, out Material Material, out IntBox Coords)
+{
+    Material = default.IconMaterial;
+    Coords = default.IconCoords;
+}
+
 defaultproperties
 {
     IconCoords=(X1=0,Y1=0,X2=31,Y2=31)

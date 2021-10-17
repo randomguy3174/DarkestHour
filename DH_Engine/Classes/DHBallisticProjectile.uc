@@ -55,6 +55,12 @@ function SaveHitPosition(vector HitLocation, vector HitNormal, class<DHMapMarker
         // Mark the hit on the map for the artillery gunner.
         PC.ClientAddPersonalMapMarker(MarkerClass, HitLocation);
     }
+    else
+    {
+        // Mark the hit on the map for the artillery gunner, but mark it with
+        // the optional byte that it didn't hit anything!
+        PC.ClientAddPersonalMapMarker(MarkerClass, HitLocation, 1);
+    }
 
     // For each map marker we hit, mark the hit on the map for the spotter as well.
     for (i = 0; i < HitMarkerIndices.Length; ++i)

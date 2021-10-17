@@ -134,14 +134,7 @@ simulated function string GetDeflectionAdjustmentString(DHPlayer PC)
     local rotator WeaponRotation;
     local DHGameReplicationInfo.MapMarker TargetMarker;
 
-    if (PC == none)
-    {
-        return "";
-    }
-
-    TargetMarker = PC.FindPersonalMarker(TargetMarkerClass);
-
-    if (TargetMarker.MapMarkerClass == none)
+    if (PC == none || !PC.GetPersonalMarkerWithClass(TargetMarkerClass, TargetMarker))
     {
         return "";
     }

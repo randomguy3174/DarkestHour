@@ -9,6 +9,19 @@ class DHMapMarker_ArtilleryHit extends DHMapMarker
 // TODO: i don't think this should be responsible for storing the range
 var int VisibilityRange; // [m]
 
+// TODO: override CanSee
+static function bool CanSeeMarker(DHPlayerReplicationInfo PRI, DHGameReplicationInfo.MapMarker Marker)
+{
+    if (Marker.OptionalByte == 1)
+    {
+        // An optional byte value of 1 means that the hit occured outside the
+        // range of any spotted targets, and so it should be invisible.
+        return false;
+    }
+
+    return super.CanSeeMarker(PRI, MarkeR);
+}
+
 defaultproperties
 {
     IconMaterial=MaterialSequence'DH_InterfaceArt2_tex.Artillery.HitMarker'
